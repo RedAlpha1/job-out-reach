@@ -98,8 +98,59 @@ a:hover {
   .workspace {
     grid-template-columns: 1fr;
   }
+}
+
+@media (max-width: 560px) {
+  .app {
+    padding: 18px 14px 64px;
+  }
+  .app__header {
+    margin-bottom: 18px;
+  }
+  .brand {
+    font-size: 17px;
+  }
   .chip__label {
     display: none;
+  }
+  .chip {
+    padding: 8px 10px;
+  }
+  .panel {
+    padding: 16px;
+  }
+
+  /* 16px inputs stop iOS Safari auto-zoom on focus. */
+  input,
+  textarea,
+  .select {
+    font-size: 16px;
+  }
+
+  .jd-textarea {
+    min-height: 120px;
+  }
+
+  /* Stack send buttons full-width for easy tapping. */
+  .draft-actions .btn {
+    flex: 1 1 100%;
+  }
+
+  .modal-overlay {
+    padding: 16px 12px;
+    align-items: flex-start;
+  }
+  .modal__body {
+    padding: 16px;
+  }
+
+  /* Let the history table scroll sideways instead of squashing. */
+  .history__body {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .history__table {
+    min-width: 460px;
   }
 }
 
