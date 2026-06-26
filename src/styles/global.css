@@ -227,6 +227,19 @@ textarea:focus {
   min-height: 150px;
 }
 
+.link-row {
+  display: flex;
+  gap: 8px;
+}
+.link-row input {
+  flex: 1;
+  min-width: 0;
+}
+.link-row__btn {
+  flex: 0 0 auto;
+  padding: 9px 14px;
+}
+
 .select {
   width: 100%;
   font-family: inherit;

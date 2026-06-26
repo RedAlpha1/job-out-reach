@@ -16,6 +16,7 @@ import {
   openMailto,
 } from "./lib/mailto";
 import { findPreset, isSettingsReady } from "./lib/providers";
+import { extractJob } from "./lib/fetchJob";
 import type { HistoryEntry, LLMSettings, Profile } from "./types";
 
 export default function App() {
@@ -26,6 +27,9 @@ export default function App() {
 
   const [recipient, setRecipient] = useState("");
   const [jd, setJd] = useState("");
+  const [jobLink, setJobLink] = useState("");
+  const [fetching, setFetching] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
   // Which modals are open. On first launch we force the provider, then the profile.
@@ -69,6 +73,25 @@ export default function App() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings, profile, recipient, jd, addEntry, draftState]);
+
+  const handleFetchLink = useCallback(async () => {
+    if (!jobLink.trim()) return;
+    setFetching(true);
+    setFetchError(null);
+    try {
+      const job = await extractJob(jobLink);
+      const parts = [job.company, job.title, job.text].filter(Boolean);
+      if (parts.length) setJd(parts.join("\n\n"));
+      if (job.email && !recipient.trim()) setRecipient(job.email);
+      if (!job.text && !job.email) {
+        setFetchError("Fetched, but found no usable text (likely login-walled). Paste the JD manually.");
+      }
+    } catch (e) {
+      setFetchError(e instanceof Error ? e.message : "Couldn't fetch that link.");
+    } finally {
+      setFetching(false);
+    }
+  }, [jobLink, recipient]);
 
   const handleSelectHistory = useCallback(
     (entry: HistoryEntry) => {
@@ -157,9 +180,14 @@ export default function App() {
         <InputPanel
           recipient={recipient}
           jd={jd}
+          jobLink={jobLink}
           loading={draftState.loading}
+          fetching={fetching}
+          fetchError={fetchError}
           onRecipientChange={setRecipient}
           onJdChange={setJd}
+          onJobLinkChange={setJobLink}
+          onFetchLink={handleFetchLink}
           onDraft={handleDraft}
         />
         <DraftPanel
